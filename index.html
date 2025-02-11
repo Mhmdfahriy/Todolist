@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <!-- Menambahkan Bootstrap melalui CDN -->
+    <link 
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" 
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="apps"></div>
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/jsx">
+      // Komponen untuk menampilkan tiap tugas
+      function TodoItem({ task, onToggle }) {
+        return (
+          <div className="d-flex align-items-center mb-2">
+            <input
+              type="checkbox"
+              checked={task.completed}
+              onChange={() => onToggle(task.id)}
+              className="mr-3"
+            />
+            <span
+              style={{ textDecoration: task.completed ? 'line-through' : '' }}
+              className="flex-grow-1"
+            >
+              {task.text}
+            </span>
+          </div>
+        );
+      }
+
+      // Komponen utama untuk daftar tugas
+      function TodoList() {
+        const [tasks, setTasks] = React.useState([]);
+        const [newTask, setNewTask] = React.useState("");
+
+        // Fungsi untuk menambah tugas
+        const addTask = () => {
+          if (newTask.trim() === "") return;
+          setTasks([...tasks, { id: Date.now(), text: newTask, completed: false }]);
+          setNewTask("");
+        };
+
+        // Fungsi untuk menandai tugas selesai/tidak
+        const toggleTask = (id) => {
+          setTasks(tasks.map(task =>
+            task.id === id ? { ...task, completed: !task.completed } : task
+          ));
+        };
+
+        return (
+          <div className="container mt-4">
+            <h1 className="text-center mb-4">Website Daftar Tugas</h1>
+            <div className="input-group mb-3">
+              <input
+                type="text"
+                value={newTask}
+                onChange={(e) => setNewTask(e.target.value)}
+                placeholder="Tambah Daftar Tugas"
+                className="form-control"
+              />
+              <div className="input-group-append">
+                <button onClick={addTask} className="btn btn-primary">Tambah</button>
+              </div>
+            </div>
+
+            <div>
+              {tasks.map((task) => (
+                <TodoItem
+                  key={task.id}
+                  task={task}
+                  onToggle={toggleTask}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      // Render aplikasi
+      ReactDOM.render(<TodoList />, document.getElementById('apps'));
+    </script>
+  </body>
+</html>
